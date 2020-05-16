@@ -1,0 +1,88 @@
+# Python to Linux Web App on Azure
+# Build your Python project and deploy it to Azure as a Linux Web App.
+# Change python version to one thats appropriate for your application.
+# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+
+trigger:
+  - staging
+
+variables:
+  # Azure Resource Manager connection created during pipeline creation
+  azureServiceConnectionId: 'cae6baac-a262-47ee-a93c-85f77bacd486'
+
+  # Web app name
+  webAppName: 'covid-19-api-arun'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+  # Environment name
+  environmentName: 'covid-19-api-arun'
+
+  # Project root folder. Point to the folder containing manage.py file.
+  projectRoot: $(System.DefaultWorkingDirectory)
+
+  # Python version: 3.8
+  pythonVersion: '3.8'
+
+stages:
+  - stage: Build
+    displayName: Build stage
+    jobs:
+      - job: BuildJob
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(pythonVersion)'
+            displayName: 'Use Python $(pythonVersion)'
+
+          - script: |
+              python -m venv antenv
+              source antenv/bin/activate
+              pip install -r requirements.txt
+              pip install -U flask-cors
+              export set FLASK_APP=startup
+              python -m setup develop
+            workingDirectory: $(projectRoot)
+            displayName: "Install requirements"
+
+          - task: ArchiveFiles@2
+            displayName: 'Archive files'
+            inputs:
+              rootFolderOrFile: '$(projectRoot)'
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+              replaceExistingArchive: true
+
+          - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+            displayName: 'Upload package'
+            artifact: drop
+
+  - stage: Deploy
+    displayName: 'Deploy Web App'
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - deployment: DeploymentJob
+        pool:
+          vmImage: $(vmImageName)
+        environment: $(environmentName)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+
+                - task: UsePythonVersion@0
+                  inputs:
+                    versionSpec: '$(pythonVersion)'
+                  displayName: 'Use Python version'
+
+                - task: AzureWebApp@1
+                  displayName: 'Deploy Azure Web App : covid-19-api'
+                  inputs:
+                    azureSubscription: $(azureServiceConnectionId)
+                    appName: $(webAppName)
+                    package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
