@@ -11,13 +11,13 @@ variables:
   azureServiceConnectionId: 'cae6baac-a262-47ee-a93c-85f77bacd486'
 
   # Web app name
-  webAppName: 'covid-19-api-arun'
+  webAppName: 'covid19-api-arun'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
   # Environment name
-  environmentName: 'covid-19-api-arun'
+  environmentName: 'covid19-api-arun'
 
   # Project root folder. Point to the folder containing manage.py file.
   projectRoot: $(System.DefaultWorkingDirectory)
