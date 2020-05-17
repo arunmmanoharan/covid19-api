@@ -3,15 +3,15 @@
 # Change python version to one thats appropriate for your application.
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
-trigger:
+trigger: none
+
+pr:
   branches:
     include:
       - '*'
     exclude:
       - staging
       - prod
-
-pr: none
 
 variables:
   # Web app name
