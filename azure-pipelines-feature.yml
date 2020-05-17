@@ -9,9 +9,6 @@ pr:
   branches:
     include:
       - '*'
-    exclude:
-      - staging
-      - prod
 
 variables:
   # Web app name
