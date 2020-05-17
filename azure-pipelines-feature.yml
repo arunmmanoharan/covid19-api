@@ -1,0 +1,33 @@
+# Python to Linux Web App on Azure
+# Build your Python project and deploy it to Azure as a Linux Web App.
+# Change python version to one thats appropriate for your application.
+# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+
+trigger:
+  branches:
+    include:
+      - '*'
+    exclude:
+      - staging
+      - prod
+
+pr: none
+
+variables:
+  # Web app name
+  webAppName: 'covid19-api-arun'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+  # Environment name
+  environmentName: 'covid19-api-arun'
+
+  # Project root folder. Point to the folder containing manage.py file.
+  projectRoot: $(System.DefaultWorkingDirectory)
+
+  # Python version: 3.8
+  pythonVersion: '3.8'
+
+stages:
+  - template: azure-pipelines-build.yml
