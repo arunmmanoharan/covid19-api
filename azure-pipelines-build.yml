@@ -1,25 +1,25 @@
 stages:
   - stage: Build
-      displayName: Build stage
-      jobs:
-        - job: BuildJob
-          pool:
-            vmImage: $(vmImageName)
-          steps:
-            - task: UsePythonVersion@0
-              inputs:
-                versionSpec: '$(pythonVersion)'
-              displayName: 'Use Python $(pythonVersion)'
+    displayName: Build stage
+    jobs:
+      - job: BuildJob
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(pythonVersion)'
+            displayName: 'Use Python $(pythonVersion)'
 
-            - script: |
-                python -m venv antenv
-                source antenv/bin/activate
-                pip install -r requirements.txt
-                pip install -U flask-cors
-                export set FLASK_APP=startup
-                python -m setup develop
-              workingDirectory: $(projectRoot)
-              displayName: "Install requirements"
+          - script: |
+              python -m venv antenv
+              source antenv/bin/activate
+              pip install -r requirements.txt
+              pip install -U flask-cors
+              export set FLASK_APP=startup
+              python -m setup develop
+            workingDirectory: $(projectRoot)
+            displayName: "Install requirements"
 
             - task: ArchiveFiles@2
               displayName: 'Archive files'
