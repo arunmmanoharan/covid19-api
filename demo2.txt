@@ -1,0 +1,1 @@
+Direct push to demo2 when a PR is open from demo2 into demo1
