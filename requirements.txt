@@ -51,7 +51,7 @@ mccabe==0.6.1
 more-itertools==8.2.0
 msrest==0.6.11
 msrestazure==0.6.3
-numpy==1.18.2
+numpy==1.22.0
 oauthlib==3.1.0
 opencensus==0.7.7
 opencensus-context==0.1.1
